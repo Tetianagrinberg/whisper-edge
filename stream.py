@@ -10,7 +10,7 @@ from time import time as now
 import whisper
 
 FLAGS = flags.FLAGS
-flags.DEFINE_string('model_name', 'base.en',
+flags.DEFINE_string('model_name', 'tiny.en',
                     'The version of the OpenAI Whisper model to use.')
 flags.DEFINE_string('language', 'en',
                     'The language to use or empty to auto-detect.')
@@ -22,7 +22,7 @@ flags.DEFINE_integer('num_channels', 1,
                      'The number of channels of the recorded audio.')
 flags.DEFINE_integer('channel_index', 0,
                      'The index of the channel to use for transcription.')
-flags.DEFINE_integer('chunk_seconds', 10,
+flags.DEFINE_integer('chunk_seconds', 1,
                      'The length in seconds of each recorded chunk of audio.')
 flags.DEFINE_string('latency', 'low', 'The latency of the recording stream.')
 

@@ -35,6 +35,7 @@ def timed(func):
         result = func(*args, **kwargs)
         stop = now()
         logging.debug(f'{func.__name__} took {stop-start:.3f}s')
+        print(f'{func.__name__} took {stop-start:.3f}s')
         return result
     return wrapper
 

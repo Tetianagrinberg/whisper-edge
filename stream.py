@@ -111,7 +111,7 @@ def main(argv):
                 queue_output=audio_queue.get()
                 print(queue_output.shape)
                 audio.append(queue_output)
-            transcription_window= np.concatenate(audio, axis=1)
+            transcription_window= np.concatenate(audio, axis=0)
             print(transcription_window.shape)
             process_audio(transcription_window, model)
             del audio[0]

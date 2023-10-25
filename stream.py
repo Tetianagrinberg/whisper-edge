@@ -66,7 +66,7 @@ def process_audio(audio_queue, model):
     start_q = now() 
     audio = audio_queue.get()
     stop_q = now()
-    print(f"pulling from queue took took {stop_q-start_q:.3f}s')
+    print(f"pulling from queue took took {stop_q-start_q:.3f}s")
     # Transcribe the latest audio chunk.
     transcribe(model=model, audio=audio)
 

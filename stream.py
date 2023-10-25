@@ -22,7 +22,7 @@ flags.DEFINE_integer('num_channels', 1,
                      'The number of channels of the recorded audio.')
 flags.DEFINE_integer('channel_index', 0,
                      'The index of the channel to use for transcription.')
-flags.DEFINE_integer('chunk_seconds', 3,
+flags.DEFINE_integer('chunk_seconds', 10,
                      'The length in seconds of each recorded chunk of audio.')
 flags.DEFINE_string('latency', 'low', 'The latency of the recording stream.')
 
@@ -35,7 +35,7 @@ def timed(func):
         result = func(*args, **kwargs)
         stop = now()
         logging.debug(f'{func.__name__} took {stop-start:.3f}s')
-        # print(f'{func.__name__} took {stop-start:.3f}s')
+        print(f'{func.__name__} took {stop-start:.3f}s')
         return result
     return wrapper
 
@@ -63,8 +63,10 @@ def stream_callback(indata, frames, time, status, audio_queue):
 @timed
 def process_audio(audio_queue, model):
     # Block until the next chunk of audio is available on the queue.
+    start_q = now() 
     audio = audio_queue.get()
-
+    stop_q = now()
+    print(f"pulling from queue took took {stop_q-start_q:.3f}s'
     # Transcribe the latest audio chunk.
     transcribe(model=model, audio=audio)
 

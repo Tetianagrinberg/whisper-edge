@@ -22,7 +22,7 @@ flags.DEFINE_integer('num_channels', 1,
                      'The number of channels of the recorded audio.')
 flags.DEFINE_integer('channel_index', 0,
                      'The index of the channel to use for transcription.')
-flags.DEFINE_integer('chunk_seconds', 5,
+flags.DEFINE_integer('chunk_seconds', 2,
                      'The length in seconds of each recorded chunk of audio.')
 flags.DEFINE_string('latency', 'low', 'The latency of the recording stream.')
 
@@ -51,22 +51,32 @@ def transcribe(model, audio):
 
 
 @timed
-def stream_callback(indata, frames, time, status, audio_queue):
+def stream_callback(indata, frames, time, status, audio_queue, transcription_queue):
     if status:
         logging.warning(f'Stream callback status: {status}')
 
     # Add this chunk of audio to the queue.
     audio = indata[:, FLAGS.channel_index].copy()
     audio_queue.put(audio)
+    # if not transcription_queue.full():
+    #     transcription_queue.put(audio)
 
 
 @timed
-def process_audio(audio_queue, model):
+def process_audio(audio, model):
     # Block until the next chunk of audio is available on the queue.
-    audio = audio_queue.get()
+    # audio = audio_queue.get()
 
     # Transcribe the latest audio chunk.
     transcribe(model=model, audio=audio)
+
+# @timed
+# def process_audio(transcription_queue, model):
+#     # Block until the next chunk of audio is available on the queue.
+#     audio = transcription_queue.get()
+#
+#     # Transcribe the latest audio chunk.
+#     transcribe(model=model, audio=audio)
 
 
 def main(argv):
@@ -92,10 +102,18 @@ def main(argv):
                         dtype=np.float32,
                         latency=FLAGS.latency,
                         callback=callback):
+        audio = []
         while True:
             # Process chunks of audio from the queue.
-            process_audio(audio_queue, model)
-
+            # process_audio(audio_queue, model)
+            while len(audio)<5:
+                queue_output=audio_queue.get()
+                print(queue_output.shape)
+                audio.append(queue_output)
+            transcription_window= np.concatenate(audio, axis=1)
+            print(transcription_window.shape)
+            process_audio(transcription_window, model)
+            del audio[0]
 
 if __name__ == '__main__':
     app.run(main)

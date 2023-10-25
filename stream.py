@@ -51,7 +51,7 @@ def transcribe(model, audio):
 
 
 @timed
-def stream_callback(indata, frames, time, status, audio_queue, transcription_queue):
+def stream_callback(indata, frames, time, status, audio_queue):
     if status:
         logging.warning(f'Stream callback status: {status}')
 
@@ -95,6 +95,7 @@ def main(argv):
     logging.info('Starting stream...')
     audio_queue = queue.Queue()
     callback = partial(stream_callback, audio_queue=audio_queue)
+    audio = []
     with sd.InputStream(samplerate=FLAGS.sample_rate,
                         blocksize=block_size,
                         device=FLAGS.input_device,
@@ -102,7 +103,7 @@ def main(argv):
                         dtype=np.float32,
                         latency=FLAGS.latency,
                         callback=callback):
-        audio = []
+        
         while True:
             # Process chunks of audio from the queue.
             # process_audio(audio_queue, model)

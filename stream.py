@@ -68,11 +68,9 @@ def process_audio(audio_queue, model):
       audio = audio_queue.get_nowait()
       stop_q = now()
       print(f"pulling from queue took took {stop_q-start_q:.3f}s")
-      # Transcribe the latest audio chunk.
-      start_t = now() 
+      # Transcribe the latest audio chunk. 
       transcribe(model=model, audio=audio)
-      stop_t = now()
-      print(f"transcribing took {stop_t-start_t:.3f}s")
+
     else:
       pass
 

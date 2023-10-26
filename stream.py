@@ -64,10 +64,10 @@ def stream_callback(indata, frames, time, status, audio_queue):
 def process_audio(audio_queue, model):
     # Block until the next chunk of audio is available on the queue.
     if not audio_queue.empty():
-      start_q = now() 
+      # start_q = now() 
       audio = audio_queue.get_nowait()
-      stop_q = now()
-      print(f"pulling from queue took took {stop_q-start_q:.3f}s")
+      # stop_q = now()
+      # print(f"pulling from queue took took {stop_q-start_q:.3f}s")
       # Transcribe the latest audio chunk.
       transcribe(model=model, audio=audio)
     else:

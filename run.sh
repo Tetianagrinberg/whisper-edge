@@ -11,5 +11,5 @@ sudo docker run \
   --network host \
   --device /dev/snd \
   whisper-inference \
-  python stream.py \
+  python power_inference.py \
   $@

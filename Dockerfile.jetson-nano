@@ -42,5 +42,5 @@ ENV CACHED_MODELS="base base.en tiny tiny.en"
 RUN for model in $CACHED_MODELS; do python -c "import whisper; whisper.load_model('$model')"; done
 
 # Add the streaming script and its dependencies.
-RUN python -m pip install absl-py
+RUN python -m pip install absl-py pandas
 COPY power_inference.py .

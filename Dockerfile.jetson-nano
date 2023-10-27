@@ -48,3 +48,8 @@ RUN for model in $CACHED_MODELS; do python -c "import whisper; whisper.load_mode
 # Add the streaming script and its dependencies.
 RUN python -m pip install absl-py pandas
 COPY run_inference.py .
+COPY speech1.mp3
+COPY speech2.mp3
+COPY speech3.mp3
+COPY speech4.mp3
+COPY speech5.mp3

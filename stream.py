@@ -22,7 +22,7 @@ flags.DEFINE_integer('num_channels', 1,
                      'The number of channels of the recorded audio.')
 flags.DEFINE_integer('channel_index', 0,
                      'The index of the channel to use for transcription.')
-flags.DEFINE_integer('chunk_seconds', 4,
+flags.DEFINE_integer('chunk_seconds', 3,
                      'The length in seconds of each recorded chunk of audio.')
 flags.DEFINE_string('latency', 'low', 'The latency of the recording stream.')
 
@@ -46,8 +46,8 @@ def transcribe(model, audio):
     result = whisper.transcribe(model=model, audio=audio)
 
     # Use the transcribed text.
-    # text = result['text'].strip()
-    text = result
+    text = result['text'].strip()
+    # text = result
     logging.info(text)
 
 

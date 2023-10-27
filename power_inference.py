@@ -8,30 +8,30 @@ import torch
 
 def record_power_consumption(arr, interval=0.1, duration=30):
     start_time = time.time()
-    index = 0
+
     while time.time() - start_time < duration:
         try:
             with open('/jetson-inference/power/in_current0_input') as file:
               current = float(file.read().strip())  # Ensure it's a float
-              arr[index] = current
-              index += 1
+              arr.append(current)
+
         except IOError as e:
           print("Error reading file: ", e)
     time.sleep(interval)
 
 
-def save_csv(np_array, file_name):
-    df = pd.DataFrame(np_array)
+def save_csv(my_array, file_name):
+    df = pd.DataFrame(np.asarray(my_array))
     df.to_csv(file_name)
 
 def run_whisper_inference(latencies, whisper_model):
-    rec_folder = "/jetson-inference/speeches/" #replace directory if needed
+    speech_ids=[1,2,3,4,5]
     speech_index = 0
-    for audio in os.listdir(rec_folder):
+    for speech_id in speech_ids:
         inference_start = time.time()
-        result = whisper.transcribe(model=whisper_model, audio=rec_folder + audio)
+        result = whisper.transcribe(model=whisper_model, audio=f"speech{speech_id}.mp3")
         inference_stop = time.time()
-        latencies[speech_index] = inference_stop - inference_start
+        latencies.append( inference_stop - inference_start )
         text = result['text'].strip()
         print(text)
         speech_index += 1
@@ -48,9 +48,9 @@ if __name__ == "__main__":
     whisper.transcribe(model=model,
                        audio=np.zeros(dummy_recording_size, dtype=np.float32))
 
-    array_size = int(1000 / 0.1)
-    power_readings = np.zeros(array_size)
-    latencies = np.zeros(int(1000))
+
+    power_readings = []
+    latencies = []
 
     thread_power = threading.Thread(target=record_power_consumption, args=(power_readings,))
     thread_inference = threading.Thread(target=run_whisper_inference, args=(latencies, model))
@@ -67,9 +67,6 @@ if __name__ == "__main__":
 
     print("all threads complete")
 
-    #remove unfilled cells in  both arrays
-    np.trim_zeros(power_readings)
-    np.trim_zeros(latencies)
 
     # Now power_readings contains the power consumption data
     print("Power consumption readings:")

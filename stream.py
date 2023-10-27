@@ -46,7 +46,8 @@ def transcribe(model, audio):
     result = whisper.transcribe(model=model, audio=audio)
 
     # Use the transcribed text.
-    text = result['text'].strip()
+    # text = result['text'].strip()
+    text = result
     logging.info(text)
 
 

@@ -11,7 +11,7 @@ def record_power_consumption(arr, interval=0.1, duration=30):
     index = 0
     while time.time() - start_time < duration:
         try:
-            with open('/power/in_current0_input') as file:
+            with open('/jetson-inference/power/in_current0_input') as file:
               current = float(file.read().strip())  # Ensure it's a float
               arr[index] = current
               index += 1
@@ -19,16 +19,13 @@ def record_power_consumption(arr, interval=0.1, duration=30):
           print("Error reading file: ", e)
     time.sleep(interval)
 
-  # Truncate the array to the actual size
-    arr.resize(index)
-
 
 def save_csv(np_array, file_name):
     df = pd.DataFrame(np_array)
     df.to_csv(file_name)
 
 def run_whisper_inference(latencies, whisper_model):
-    rec_folder = "/speeches/" #replace directory if needed
+    rec_folder = "/jetson-inference/speeches/" #replace directory if needed
     speech_index = 0
     for audio in os.listdir(rec_folder):
         inference_start = time.time()

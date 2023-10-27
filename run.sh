@@ -10,6 +10,8 @@ sudo docker run \
   --rm  \
   --network host \
   --device /dev/snd \
+  --mount type=bind, source=/sys/bus/i2c/drivers/ina3221x/6-0040/iio:device0/, destination=/var/power/ \
+  --mount type=bind, source=/home/bongard/Desktop/speeches/, destination=/var/speeches/\
   whisper-inference \
   python power_inference.py \
   $@

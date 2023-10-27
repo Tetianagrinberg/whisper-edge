@@ -75,5 +75,5 @@ if __name__ == "__main__":
     print("latencies: ")
     print(latencies)
 
-    save_csv(power_readings, "power_readings.csv")
-    save_csv(latencies, "latencies.csv")
+    save_csv(power_readings, "/jetson-inference/speeches/power_readings.csv")
+    save_csv(latencies, "/jetson-inference/speeches/latencies.csv")

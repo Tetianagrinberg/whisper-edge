@@ -5,6 +5,10 @@ ENV SHELL /bin/bash
 
 WORKDIR /jetson-inference
 
+# make two new directories inside workdir
+RUN mkdir -p speeches
+RUN mkdir -p power
+
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 42D5A192B819C5DA
 RUN apt-get update
 

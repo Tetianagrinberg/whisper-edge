@@ -8,6 +8,7 @@ import queue
 import sounddevice as sd
 from time import time as now
 import whisper
+import threading 
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string('model_name', 'tiny.en',
@@ -65,22 +66,39 @@ def stream_callback(indata, frames, time, status, audio_queue):
 def process_audio(audio_queue, model):
     # Block until the next chunk of audio is available on the queue.
     if not audio_queue.empty():
-      start_q = now() 
+      start_q = now()
       audio = audio_queue.get_nowait()
       stop_q = now()
       print(f"pulling from queue took took {stop_q-start_q:.3f}s")
-      # Transcribe the latest audio chunk. 
+      # Transcribe the latest audio chunk.
       transcribe(model=model, audio=audio)
 
     else:
       pass
-
+    
+def record_power_consumption(arr, interval=0.1, duration=60):
+    start_time = now()
+    index = 0
+    while now() - start_time < duration:
+        try:
+            with open('/sys/bus/i2c/drivers/ina3221x/6-0040/iio:device0/in_power1_input') as file:
+                current = float(file.read().strip())  # Ensure it's a float
+                arr[index] = current
+                index += 1
+        except IOError as e:
+            print("Error reading file: ", e)
+        now.sleep(interval)
 
 def main(argv):
+    # Define the array size: duration / interval
+    array_size = int(60 / 0.1)
+    power_readings = np.zeros(array_size)
+
+
     # Load the Whisper model into memory, downloading first if necessary.
     logging.info(f'Loading model "{FLAGS.model_name}"...')
     model = whisper.load_model(name=FLAGS.model_name)
-
+    
     # The first run of the model is slow (buffer init), so run it once empty.
     logging.info('Warming model up...')
     block_size = FLAGS.chunk_seconds * FLAGS.sample_rate
@@ -92,6 +110,11 @@ def main(argv):
     logging.info('Starting stream...')
     audio_queue = queue.Queue()
     callback = partial(stream_callback, audio_queue=audio_queue)
+    # Start the thread
+    thread = threading.Thread(target=record_power_consumption, args=(power_readings,))
+    thread.start()
+    duration=60
+    stream_start=now()
     with sd.InputStream(samplerate=FLAGS.sample_rate,
                         blocksize=block_size,
                         device=FLAGS.input_device,
@@ -99,10 +122,12 @@ def main(argv):
                         dtype=np.float32,
                         latency=FLAGS.latency,
                         callback=callback):
-        while True:
+        while now()-stream_start < duration:
             # Process chunks of audio from the queue.
             process_audio(audio_queue, model)
-
+    
+    # Wait for the thread to complete
+    thread.join()
 
 if __name__ == '__main__':
     app.run(main)

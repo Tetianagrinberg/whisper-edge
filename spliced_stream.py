@@ -37,13 +37,13 @@ def timed(func):
         result = func(*args, **kwargs)
         stop = time.time()
         logging.debug(f'{func.__name__} took {stop - start:.3f}s')
-        print(f'{func.__name__} took {stop - start:.3f}s')
+        # print(f'{func.__name__} took {stop - start:.3f}s')
         return result
 
     return wrapper
 
 
-@timed
+# @timed
 def transcribe(model, audio):
     # Run the Whisper model to transcribe the audio chunk.
     result = whisper.transcribe(model=model, audio=audio)
@@ -54,7 +54,7 @@ def transcribe(model, audio):
     logging.info(text)
 
 
-@timed
+# @timed
 def stream_callback(indata, frames, time, status, audio_queue):
     if status:
         logging.warning(f'Stream callback status: {status}')
@@ -70,7 +70,7 @@ def process_audio(audio_queue, model):
     audio=[]
     counter=0
     while not audio_queue.empty():
-        print(f"popping audio {counter}")
+        # print(f"popping audio {counter}")
         counter+=1
         # start_q = time.time()
         audio.append(audio_queue.get_nowait())
@@ -78,7 +78,7 @@ def process_audio(audio_queue, model):
         # print(f"pulling from queue took {stop_q - start_q:.3f}s")
         # Transcribe the latest audio chunk.
     if len(audio) > 0:
-        print(f"processing {len(audio)} segments...")
+        # print(f"processing {len(audio)} segments...")
         joined_audio = audio[0] if len(audio)==1 else np.concatenate(audio)
         transcribe(model=model, audio=joined_audio)
 

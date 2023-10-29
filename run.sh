@@ -12,5 +12,5 @@ sudo docker run \
   --device /dev/snd \
   --mount type=bind,source=/home/bongard/Desktop/outputs/,destination=/jetson-inference/speeches/ \
   whisper-inference \
-  python stream.py \
+  python spliced_stream.py \
   $@

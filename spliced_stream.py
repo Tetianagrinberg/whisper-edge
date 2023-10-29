@@ -46,7 +46,7 @@ def timed(func):
 # @timed
 def transcribe(model, audio):
     # Run the Whisper model to transcribe the audio chunk.
-    result = whisper.transcribe(model=model, audio=audio)
+    result = whisper.transcribe(model=model, audio=audio, word_timestamps=False, condition_on_previous_text=False)
 
     # Use the transcribed text.
     text = result['text'].strip()

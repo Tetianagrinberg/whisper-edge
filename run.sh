@@ -10,6 +10,7 @@ sudo docker run \
   --rm  \
   --network host \
   --device /dev/snd \
+  --mount type=bind,source=/home/bongard/Desktop/outputs/,destination=/jetson-inference/speeches/ \
   whisper-inference \
   python stream.py \
   $@

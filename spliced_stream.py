@@ -50,8 +50,8 @@ def transcribe(model, audio):
 
     # Use the transcribed text.
     text = result['text'].strip()
-    # text = result
-    logging.info(text)
+    print("\n" + text)
+    # logging.info(text)
 
 
 # @timed

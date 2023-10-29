@@ -23,7 +23,7 @@ flags.DEFINE_integer('num_channels', 1,
                      'The number of channels of the recorded audio.')
 flags.DEFINE_integer('channel_index', 0,
                      'The index of the channel to use for transcription.')
-flags.DEFINE_integer('chunk_seconds', 3,
+flags.DEFINE_integer('chunk_seconds', 30,
                      'The length in seconds of each recorded chunk of audio.')
 flags.DEFINE_string('latency', 'low', 'The latency of the recording stream.')
 
@@ -76,7 +76,7 @@ def process_audio(audio_queue, model):
     else:
       pass
     
-def record_power_consumption(arr, interval=0.1, duration=60):
+def record_power_consumption(arr, interval=0.1, duration=180):
     start_time = now()
     index = 0
     while now() - start_time < duration:
@@ -91,7 +91,7 @@ def record_power_consumption(arr, interval=0.1, duration=60):
 
 def main(argv):
     # Define the array size: duration / interval
-    array_size = int(60 / 0.1)
+    array_size = int(180 / 0.1)
     power_readings = np.zeros(array_size)
 
 
@@ -113,7 +113,7 @@ def main(argv):
     # Start the thread
     thread = threading.Thread(target=record_power_consumption, args=(power_readings,))
     thread.start()
-    duration=60
+    duration=180
     stream_start=now()
     with sd.InputStream(samplerate=FLAGS.sample_rate,
                         blocksize=block_size,
@@ -128,6 +128,8 @@ def main(argv):
     
     # Wait for the thread to complete
     thread.join()
+    print(power_readings)
+    np.save("power_readings30s.npy", power_readings)
 
 if __name__ == '__main__':
     app.run(main)

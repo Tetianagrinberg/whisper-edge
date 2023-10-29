@@ -44,3 +44,4 @@ RUN for model in $CACHED_MODELS; do python -c "import whisper; whisper.load_mode
 # Add the streaming script and its dependencies.
 RUN python -m pip install absl-py
 COPY stream.py .
+COPY spliced_stream.py .

@@ -6,7 +6,7 @@ from functools import wraps
 import numpy as np
 import queue
 import sounddevice as sd
-from time import time as now
+import time
 import whisper
 import threading 
 
@@ -32,9 +32,9 @@ flags.DEFINE_string('latency', 'low', 'The latency of the recording stream.')
 def timed(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        start = now()
+        start = time.time()
         result = func(*args, **kwargs)
-        stop = now()
+        stop = time.time()
         logging.debug(f'{func.__name__} took {stop-start:.3f}s')
         print(f'{func.__name__} took {stop-start:.3f}s')
         return result
@@ -66,9 +66,9 @@ def stream_callback(indata, frames, time, status, audio_queue):
 def process_audio(audio_queue, model):
     # Block until the next chunk of audio is available on the queue.
     if not audio_queue.empty():
-      start_q = now()
+      start_q = time.time()
       audio = audio_queue.get_nowait()
-      stop_q = now()
+      stop_q = time.time()
       print(f"pulling from queue took took {stop_q-start_q:.3f}s")
       # Transcribe the latest audio chunk.
       transcribe(model=model, audio=audio)
@@ -77,9 +77,9 @@ def process_audio(audio_queue, model):
       pass
     
 def record_power_consumption(arr, interval=0.1, duration=180):
-    start_time = now()
+    start_time = time.time()
     index = 0
-    while now() - start_time < duration:
+    while time.time() - start_time < duration:
         try:
             with open('/sys/bus/i2c/drivers/ina3221x/6-0040/iio:device0/in_power1_input') as file:
                 current = float(file.read().strip())  # Ensure it's a float
@@ -87,7 +87,7 @@ def record_power_consumption(arr, interval=0.1, duration=180):
                 index += 1
         except IOError as e:
             print("Error reading file: ", e)
-        now.sleep(interval)
+        time.sleep(interval)
 
 def main(argv):
     # Define the array size: duration / interval
@@ -114,7 +114,7 @@ def main(argv):
     thread = threading.Thread(target=record_power_consumption, args=(power_readings,))
     thread.start()
     duration=180
-    stream_start=now()
+    stream_start=time.time()
     with sd.InputStream(samplerate=FLAGS.sample_rate,
                         blocksize=block_size,
                         device=FLAGS.input_device,
@@ -122,7 +122,7 @@ def main(argv):
                         dtype=np.float32,
                         latency=FLAGS.latency,
                         callback=callback):
-        while now()-stream_start < duration:
+        while time.time()-stream_start < duration:
             # Process chunks of audio from the queue.
             process_audio(audio_queue, model)
     

@@ -129,7 +129,7 @@ def main(argv):
     # Wait for the thread to complete
     thread.join()
     print(power_readings)
-    np.save("power_readings30s.npy", power_readings)
+    np.save("/jetson-inference/speeches/power_readings30s.npy", power_readings)
 
 if __name__ == '__main__':
     app.run(main)

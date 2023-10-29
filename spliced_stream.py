@@ -27,7 +27,7 @@ flags.DEFINE_integer('chunk_seconds', 2,
                      'The length in seconds of each recorded chunk of audio.')
 flags.DEFINE_string('latency', 'low', 'The latency of the recording stream.')
 
-DURATION=30
+DURATION=120
 
 # A decorator to log the timing of performance-critical functions.
 def timed(func):
@@ -68,7 +68,10 @@ def stream_callback(indata, frames, time, status, audio_queue):
 def process_audio(audio_queue, model):
     # Block until the next chunk of audio is available on the queue.
     audio=[]
+    counter=0
     while not audio_queue.empty():
+        print(f"popping audio {counter}")
+        counter+=1
         # start_q = time.time()
         audio.append(audio_queue.get_nowait())
         # stop_q = time.time()
@@ -78,8 +81,6 @@ def process_audio(audio_queue, model):
         print(f"processing {len(audio)} segments...")
         joined_audio = audio[0] if len(audio)==1 else np.concatenate(audio)
         transcribe(model=model, audio=joined_audio)
-
-
 
 
 def record_power_consumption(arr, interval=0.1, duration=DURATION):
@@ -134,7 +135,7 @@ def main(argv):
 
     # Wait for the thread to complete
     thread.join()
-    print(power_readings)
+    # print(power_readings)
     np.save("/jetson-inference/speeches/power_readings2s.npy", power_readings)
 
 

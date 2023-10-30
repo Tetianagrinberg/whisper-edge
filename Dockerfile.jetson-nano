@@ -19,18 +19,16 @@ RUN python -m pip install --upgrade pip
 
 # Install build tools.
 RUN python -m pip install setuptools setuptools_rust
+RUN python -m pip install regex requests zlib
+RUN python -m pip install numba numpy cupy tqdm ffmpeg-python==0.2.0 torch tensorflow transformers
 
-# Install the patched version of tiktoken and its dependencies.
-RUN git clone https://github.com/maxbbraun/tiktoken.git && cd tiktoken && python -m pip install -e .
-RUN python -m pip install regex requests cached-property
+#clone github repo
+RUN git clone https://github.com/Tetianagrinberg/whisper-onnx-tensorrt.git && cd whisper-onnx-tensorrt
 
 # Configure LLVM.
 RUN apt-get -y install clang-10 llvm-10
 ENV LLVM_CONFIG=/usr/bin/llvm-config-10
 RUN apt-get -y remove libtbb-dev
-
-# Install the patched version of whisper.
-RUN git clone https://github.com/maxbbraun/whisper.git && cd whisper && python -m pip install -e .
 
 # Configure the microphone.
 RUN apt-get -y install libportaudio2
@@ -38,10 +36,30 @@ RUN python -m pip install sounddevice
 ENV PA_ALSA_PLUGHW=1
 
 # Pre-cache some of the models.
-ENV CACHED_MODELS="base base.en tiny tiny.en"
-RUN for model in $CACHED_MODELS; do python -c "import whisper; whisper.load_model('$model')"; done
+# ENV CACHED_MODELS="tiny.en"
+# RUN for model in $CACHED_MODELS; do python -c "import whisper; whisper.load_model('$model')"; done
+
+
+# Install onnx-tensorrt
+RUN git clone -b release/8.2-GA --recursive https://github.com/onnx/onnx-tensorrt /home/${USERNAME}/onnx-tensorrt \
+    && pushd /home/${USERNAME}/onnx-tensorrt \
+    && mkdir build \
+    && pushd build \
+    && cmake .. -DTENSORRT_ROOT=/usr/src/tensorrt \
+    && make -j$(nproc) \
+    && sudo make install \
+    && popd \
+    && popd \
+    && pip install pycuda==${PYCUDAVER} \
+    && echo "pushd /home/${USERNAME}/onnx-tensorrt > /dev/null" >> ~/.bashrc \
+    # At docker build time, setup.py fails because NVIDIA's physical GPU device cannot be detected.
+    # Therefore, a workaround is applied to configure setup.py to run on first access.
+    && echo 'python setup.py install --user 1>/dev/null 2>/dev/null' >> ~/.bashrc \
+    && echo 'popd > /dev/null' >> ~/.bashrc \
+    && echo 'export CUDA_MODULE_LOADING=LAZY' >> ~/.bashrc \
+    && echo 'export PATH=${PATH}:/usr/src/tensorrt/bin:${HOME}/onnx-tensorrt/build' >> ~/.bashrc
 
 # Add the streaming script and its dependencies.
 RUN python -m pip install absl-py
 COPY stream.py .
-COPY spliced_stream.py .
+COPY test.py .

@@ -1,6 +1,12 @@
 FROM dustynv/jetson-inference:r32.7.1
 
 ENV DEBIAN_FRONTEND=noninteractive
+ARG USERNAME=user
+ARG CUDAVER=10.2
+ARG CUDNNVER=8.2.1
+ARG TENSORRTVER=8.2.3
+
+
 ENV SHELL /bin/bash
 
 WORKDIR /jetson-inference
@@ -20,10 +26,10 @@ RUN python -m pip install --upgrade pip
 # Install build tools.
 RUN python -m pip install setuptools setuptools_rust
 RUN python -m pip install regex requests zlib
-RUN python -m pip install numba numpy cupy tqdm ffmpeg-python==0.2.0 torch tensorflow transformers
+RUN python -m pip install numba numpy cupy tqdm ffmpeg-python==0.2.0 tensorflow==1.15.5 transformers
 
 #clone github repo
-RUN git clone https://github.com/Tetianagrinberg/whisper-onnx-tensorrt.git && cd whisper-onnx-tensorrt
+RUN git clone https://github.com/Tetianagrinberg/whisper-onnx-tensorrt.git
 
 # Configure LLVM.
 RUN apt-get -y install clang-10 llvm-10
@@ -41,23 +47,23 @@ ENV PA_ALSA_PLUGHW=1
 
 
 # Install onnx-tensorrt
-RUN git clone -b release/8.2-GA --recursive https://github.com/onnx/onnx-tensorrt /home/${USERNAME}/onnx-tensorrt \
-    && pushd /home/${USERNAME}/onnx-tensorrt \
+RUN git clone -b release/8.2-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-tensorrt \
+    && pushd onnx-tensorrt \
     && mkdir build \
     && pushd build \
     && cmake .. -DTENSORRT_ROOT=/usr/src/tensorrt \
     && make -j$(nproc) \
     && sudo make install \
     && popd \
-    && popd \
-    && pip install pycuda==${PYCUDAVER} \
-    && echo "pushd /home/${USERNAME}/onnx-tensorrt > /dev/null" >> ~/.bashrc \
+    # && popd \
+    
+    && echo "pushd onnx-tensorrt > /dev/null" >> ~/.bashrc \
     # At docker build time, setup.py fails because NVIDIA's physical GPU device cannot be detected.
     # Therefore, a workaround is applied to configure setup.py to run on first access.
-    && echo 'python setup.py install --user 1>/dev/null 2>/dev/null' >> ~/.bashrc \
-    && echo 'popd > /dev/null' >> ~/.bashrc \
-    && echo 'export CUDA_MODULE_LOADING=LAZY' >> ~/.bashrc \
-    && echo 'export PATH=${PATH}:/usr/src/tensorrt/bin:${HOME}/onnx-tensorrt/build' >> ~/.bashrc
+    # && echo 'python setup.py install --user 1>/dev/null 2>/dev/null' >> ~/.bashrc \
+    # && echo 'popd > /dev/null' >> ~/.bashrc \
+    # && echo 'export CUDA_MODULE_LOADING=LAZY' >> ~/.bashrc \
+    # && echo 'export PATH=${PATH}:/usr/src/tensorrt/bin:${HOME}/onnx-tensorrt/build' >> ~/.bashrc
 
 # Add the streaming script and its dependencies.
 RUN python -m pip install absl-py

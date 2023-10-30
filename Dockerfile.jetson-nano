@@ -35,7 +35,7 @@ RUN python -m pip install tqdm ffmpeg-python==0.2.0
 
 
 # install tensorflow and transformers
-RUN apt-get install libhdf5-serial-dev hdf5-tools libhdf5-dev zlib1g-dev zip libjpeg8-dev liblapack-dev libblas-dev gfortran
+RUN apt-get install -y libhdf5-serial-dev hdf5-tools libhdf5-dev zlib1g-dev zip libjpeg8-dev liblapack-dev libblas-dev gfortran
 RUN apt-get install python3-pip
 RUN python3 -m pip install --upgrade pip
 RUN pip3 install -U testresources setuptools==65.5.0

@@ -26,7 +26,9 @@ RUN python -m pip install --upgrade pip
 # Install build tools.
 RUN python -m pip install setuptools setuptools_rust
 RUN python -m pip install regex requests
-RUN python -m pip install numba numpy cupy tqdm ffmpeg-python==0.2.0 tensorflow transformers
+RUN python -m pip install numba numpy cupy tqdm ffmpeg-python==0.2.0
+RUN python -m pip install tensorflow --trusted-host files.pythonhosted.org --trusted-host pypi.org --trusted-host pypi.python.org
+RUN python -m pip install transformers
 
 #clone github repo
 RUN git clone https://github.com/Tetianagrinberg/whisper-onnx-tensorrt.git

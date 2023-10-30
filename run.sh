@@ -12,6 +12,6 @@ sudo docker run \
   --device /dev/snd \
   -v `pwd`:/workdir \
   --mount type=bind,source=/home/bongard/Desktop/outputs/,destination=/jetson-inference/speeches/ \
-  whisper-inference \
+  whisper-onnx \
   python test.py \
   $@

@@ -20,5 +20,5 @@ sudo systemctl restart docker
 # Build the docker image.
 sudo docker build \
   -f whisper-edge/Dockerfile.jetson-nano \
-  -t whisper-inference \
-  whisper-onnx/
+  -t whisper-onnx \
+  whisper-edge/

@@ -10,6 +10,7 @@ sudo docker run \
   --rm  \
   --network host \
   --device /dev/snd \
+  -v `pwd`:/workdir whisper-onnx \
   --mount type=bind,source=/home/bongard/Desktop/outputs/,destination=/jetson-inference/speeches/ \
   whisper-inference \
   python test.py \

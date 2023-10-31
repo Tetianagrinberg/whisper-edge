@@ -76,12 +76,12 @@ ENV PA_ALSA_PLUGHW=1
 RUN apt-get install -y libprotobuf-dev protobuf-compiler
 
 # RUN pip install tensorrt
-RUN git clone -b master https://github.com/nvidia/TensorRT TensorRT
-RUN cd TensorRT
-RUN git submodule update --init --recursive
+RUN git clone -b release/8.0 https://github.com/nvidia/TensorRT TensorRT \
+    && cd TensorRT \
+    && git submodule update --init --recursive
 
 # Install onnx-tensorrt
-RUN git clone -b release/8.2-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-tensorrt \
+RUN git clone -b release/8.0-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-tensorrt \
     && cd onnx-tensorrt \
     && mkdir build \
     && cd build \

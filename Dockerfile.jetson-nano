@@ -73,7 +73,7 @@ ENV PA_ALSA_PLUGHW=1
 # ENV CACHED_MODELS="tiny.en"
 # RUN for model in $CACHED_MODELS; do python -c "import whisper; whisper.load_model('$model')"; done
 
-RUN apt-get install libprotobuf-dev protobuf-compiler
+RUN apt-get install -y libprotobuf-dev protobuf-compiler
 # Install onnx-tensorrt
 RUN git clone -b release/8.2-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-tensorrt \
     && cd onnx-tensorrt \

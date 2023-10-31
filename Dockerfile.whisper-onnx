@@ -77,19 +77,20 @@ RUN apt-get install -y libprotobuf-dev protobuf-compiler
 
 # RUN pip install tensorrt
 RUN git clone -b release/8.0 https://github.com/nvidia/TensorRT TensorRT \
-    && cd TensorRT \
-    && git submodule update --init --recursive
+WORKDIR /jetson-inference/TensorRT 
+RUN git submodule update --init --recursive
 
 # Install onnx-tensorrt
+WORKDIR /jetson-inference
 # RUN git clone -b release/8.0-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-tensorrt \
 RUN git clone -b 8.0-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-tensorrt 
-RUN cd onnx-tensorrt 
-RUN mkdir -p build && cd build
+WORKDIR /jetson-inference/onnx-tensorrt 
+WORKDIR /jetson-inference/onnx-tensorrt/build
 RUN cmake .. -DTENSORRT_ROOT=/usr/src/tensorrt -Donnxruntime_ENABLE_PYTHON=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 && make -j 
 # Ensure that you update your LD_LIBRARY_PATH to pick up the location of the newly built library:
 RUN export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH
 # RUN make install \
-RUN cd .. && cd .. 
+WORKDIR /jetson-inference
     
    # && echo "cd onnx-tensorrt > /dev/null" >> ~/.bashrc \
     # At docker build time, setup.py fails because NVIDIA's physical GPU device cannot be detected.

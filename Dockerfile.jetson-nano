@@ -76,26 +76,30 @@ ENV PA_ALSA_PLUGHW=1
 RUN apt-get install -y libprotobuf-dev protobuf-compiler
 
 RUN pip install tensorrt
+
+
 # Install onnx-tensorrt
 RUN git clone -b release/8.2-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-tensorrt \
     && cd onnx-tensorrt \
     && mkdir build \
     && cd build \
     && cmake .. -DTENSORRT_ROOT=/usr/src/tensorrt \
-    && make -j$(nproc) \
-    && sudo make install \
-    && cd .. \
+    && make -j \
+# Ensure that you update your LD_LIBRARY_PATH to pick up the location of the newly built library:
+RUN export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH
+# RUN make install \
+RUN cd .. \
     && cd .. \
     
-    && echo "cd onnx-tensorrt > /dev/null" >> ~/.bashrc \
+   # && echo "cd onnx-tensorrt > /dev/null" >> ~/.bashrc \
     # At docker build time, setup.py fails because NVIDIA's physical GPU device cannot be detected.
     # Therefore, a workaround is applied to configure setup.py to run on first access.
-    && echo 'python setup.py install --user 1>/dev/null 2>/dev/null' >> ~/.bashrc \
-    && echo 'cd .. > /dev/null' >> ~/.bashrc \
-    && echo 'export CUDA_MODULE_LOADING=LAZY' >> ~/.bashrc \
-    && echo 'export PATH=${PATH}:/usr/src/tensorrt/bin:${HOME}/onnx-tensorrt/build' >> ~/.bashrc
+   # && echo 'python setup.py install --user 1>/dev/null 2>/dev/null' >> ~/.bashrc \
+   # && echo 'cd .. > /dev/null' >> ~/.bashrc \
+   # && echo 'export CUDA_MODULE_LOADING=LAZY' >> ~/.bashrc \
+   # && echo 'export PATH=${PATH}:/usr/src/tensorrt/bin:${HOME}/onnx-tensorrt/build' >> ~/.bashrc
 
 # Add the streaming script and its dependencies.
-# RUN python -m pip install absl-py
+RUN python -m pip install absl-py
 COPY stream.py .
 COPY test.py .

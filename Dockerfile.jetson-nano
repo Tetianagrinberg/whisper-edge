@@ -81,7 +81,8 @@ RUN git clone -b release/8.0 https://github.com/nvidia/TensorRT TensorRT \
     && git submodule update --init --recursive
 
 # Install onnx-tensorrt
-RUN git clone -b release/8.0-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-tensorrt \
+# RUN git clone -b release/8.0-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-tensorrt \
+RUN git clone -b 8.0-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-tensorrt \
     && cd onnx-tensorrt \
     && mkdir build \
     && cd build \

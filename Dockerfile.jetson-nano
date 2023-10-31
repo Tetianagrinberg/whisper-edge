@@ -86,13 +86,13 @@ RUN git clone -b 8.0-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-t
     && cd onnx-tensorrt \
     && mkdir build \
     && cd build \
-    && cmake .. -DTENSORRT_ROOT=/usr/src/tensorrt \
-    && make -j \
+    && cmake .. -DTENSORRT_ROOT=/usr/src/tensorrt 
+RUN make -j 
 # Ensure that you update your LD_LIBRARY_PATH to pick up the location of the newly built library:
 RUN export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH
 # RUN make install \
 RUN cd .. \
-    && cd .. \
+    && cd .. 
     
    # && echo "cd onnx-tensorrt > /dev/null" >> ~/.bashrc \
     # At docker build time, setup.py fails because NVIDIA's physical GPU device cannot be detected.

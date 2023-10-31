@@ -76,7 +76,7 @@ ENV PA_ALSA_PLUGHW=1
 RUN apt-get install -y libprotobuf-dev protobuf-compiler
 
 # RUN pip install tensorrt
-RUN git clone -b release/8.0 https://github.com/nvidia/TensorRT TensorRT \
+RUN git clone -b release/8.0 https://github.com/nvidia/TensorRT TensorRT
 WORKDIR /jetson-inference/TensorRT 
 RUN git submodule update --init --recursive
 

@@ -76,16 +76,16 @@ ENV PA_ALSA_PLUGHW=1
 
 # Install onnx-tensorrt
 RUN git clone -b release/8.2-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-tensorrt \
-    && pushd onnx-tensorrt \
+    && cd onnx-tensorrt \
     && mkdir build \
-    && pushd build \
+    && cd build \
     && cmake .. -DTENSORRT_ROOT=/usr/src/tensorrt \
     && make -j$(nproc) \
     && sudo make install \
-    && popd \
-    # && popd \
+    && cd .. \
+    && cd .. \
     
-    && echo "pushd onnx-tensorrt > /dev/null" >> ~/.bashrc \
+    && echo "cd onnx-tensorrt > /dev/null" >> ~/.bashrc \
     # At docker build time, setup.py fails because NVIDIA's physical GPU device cannot be detected.
     # Therefore, a workaround is applied to configure setup.py to run on first access.
     # && echo 'python setup.py install --user 1>/dev/null 2>/dev/null' >> ~/.bashrc \
@@ -94,6 +94,6 @@ RUN git clone -b release/8.2-GA --recursive https://github.com/onnx/onnx-tensorr
     # && echo 'export PATH=${PATH}:/usr/src/tensorrt/bin:${HOME}/onnx-tensorrt/build' >> ~/.bashrc
 
 # Add the streaming script and its dependencies.
-RUN python -m pip install absl-py
+# RUN python -m pip install absl-py
 COPY stream.py .
 COPY test.py .

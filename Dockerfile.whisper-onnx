@@ -86,7 +86,9 @@ WORKDIR /jetson-inference
 RUN git clone -b 8.0-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-tensorrt 
 WORKDIR /jetson-inference/onnx-tensorrt 
 WORKDIR /jetson-inference/onnx-tensorrt/build
-RUN CXXFLAGS=-isystem\ /usr/local/cuda/targets/aarch64-linux/include cmake .. -DTENSORRT_ROOT=/usr/src/tensorrt -Donnxruntime_ENABLE_PYTHON=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 && make -j 
+# RUN CXXFLAGS=-isystem\ /usr/local/cuda/targets/aarch64-linux/include cmake .. -DTENSORRT_ROOT=/usr/src/tensorrt -Donnxruntime_ENABLE_PYTHON=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 && make -j 
+# RUN CXXFLAGS=-isystem\ /usr/local/cuda/targets/aarch64-linux/include cmake .. -DTENSORRT_ROOT=/usr/src/tensorrt -DBUILD_ONNX_PYTHON=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 && make -j 
+RUN CXXFLAGS=-isystem\ /usr/local/cuda/targets/aarch64-linux/include cmake .. -DTENSORRT_ROOT=/usr/src/tensorrt && make -j 
 # Ensure that you update your LD_LIBRARY_PATH to pick up the location of the newly built library:
 RUN export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH
 # RUN make install \

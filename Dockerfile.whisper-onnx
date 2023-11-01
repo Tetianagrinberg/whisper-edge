@@ -105,5 +105,5 @@ WORKDIR /jetson-inference
 
 # Add the streaming script and its dependencies.
 RUN python -m pip install absl-py
-COPY stream.py .
-COPY test.py .
+# COPY stream.py .
+# COPY test.py .

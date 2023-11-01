@@ -81,7 +81,7 @@ WORKDIR /jetson-inference/TensorRT
 RUN git submodule update --init --recursive
 
 # Install onnx-tensorrt
-RUN pip3 install --verbose protobuf==3.11.4
+RUN pip3 install --verbose protobuf==3.11.0
 WORKDIR /jetson-inference
 # RUN git clone -b release/8.0-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-tensorrt \
 RUN git clone -b 8.0-GA --recursive https://github.com/onnx/onnx-tensorrt onnx-tensorrt 

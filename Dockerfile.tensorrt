@@ -17,7 +17,7 @@ RUN tar xvf cmake-3.19.1.tar.gz
 
 WORKDIR /jetson-inference/cmake-3.19.1-build
 
-RUN cmake -DBUILD_QtDialog=ON -DQT_QMAKE_EXECUTABLE=/usr/lib/qt5/bin/qmake ../cmake-3.19.1
+RUN cmake -DBUILD_QtDialog=ON -DQT_QMAKE_EXECUTABLE=/usr/lib/qt5/bin/qmake ../cmake-3.19.1 -DCMAKE_USE_OPENSSL=OFF
 
 RUN make -j $(nproc)
 #make test

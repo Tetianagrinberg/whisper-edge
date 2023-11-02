@@ -10,7 +10,7 @@ RUN git submodule update --init --recursive
 WORKDIR /jetson-inference
 #RUN apt-get install -y libssl-dev openssl1.0
 # For building cmake-gui
-# RUN apt-get install -y qt5-default
+RUN apt-get install -y qt5-default
 
 RUN wget -c --show-progress https://github.com/Kitware/CMake/releases/download/v3.19.1/cmake-3.19.1.tar.gz
 RUN tar xvf cmake-3.19.1.tar.gz

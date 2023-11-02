@@ -1,0 +1,10 @@
+FROM nvcr.io/nvidia/l4t-ml:r32.7.1-py3
+
+ENV SHELL /bin/bash
+WORKDIR /jetson-inference
+
+RUN git clone -b release/8.0 https://github.com/nvidia/TensorRT TensorRT
+WORKDIR /jetson-inference/TensorRT 
+RUN git submodule update --init --recursive
+
+

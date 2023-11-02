@@ -7,4 +7,9 @@ RUN git clone -b release/8.0 https://github.com/nvidia/TensorRT TensorRT
 WORKDIR /jetson-inference/TensorRT 
 RUN git submodule update --init --recursive
 
+RUN export TRT_LIBPATH=`pwd`/TensorRT-8.0.3.4
+WORKDIR /jetson-inference/TensorRT/build 
+
+RUN cmake .. -DTRT_LIB_DIR=$TRT_LIBPATH -DTRT_OUT_DIR=`pwd`/out -DTRT_PLATFORM_ID=aarch64 -DCUDA_VERSION=10.2
+RUN CC=/usr/bin/gcc make -j$(nproc)
 

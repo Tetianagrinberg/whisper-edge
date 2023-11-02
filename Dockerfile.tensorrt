@@ -7,6 +7,24 @@ RUN git clone -b release/8.0 https://github.com/nvidia/TensorRT TensorRT
 WORKDIR /jetson-inference/TensorRT 
 RUN git submodule update --init --recursive
 
+WORKDIR /jetson-inference
+RUN apt install -y libssl-dev openssl1.0
+# For building cmake-gui
+RUN apt install -y qt5-default
+
+RUN wget -c --show-progress https://github.com/Kitware/CMake/releases/download/v3.19.1/cmake-3.19.1.tar.gz
+RUN tar xvf cmake-3.19.1.tar.gz
+
+WORKDIR /jetson-inference/cmake-3.19.1-build
+
+RUN cmake -DBUILD_QtDialog=ON -DQT_QMAKE_EXECUTABLE=/usr/lib/qt5/bin/qmake ../cmake-3.19.1
+
+RUN make -j $(nproc)
+#make test
+RUN make install
+RUN cmake --version
+
+WORKDIR /jetson-inference/TensorRT/
 RUN export TRT_LIBPATH=`pwd`/TensorRT-8.0.3.4
 WORKDIR /jetson-inference/TensorRT/build 
 

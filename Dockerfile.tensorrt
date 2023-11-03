@@ -15,19 +15,4 @@ WORKDIR /jetson-inference
 RUN wget -c --show-progress https://github.com/Kitware/CMake/releases/download/v3.19.1/cmake-3.19.1.tar.gz
 RUN tar xvf cmake-3.19.1.tar.gz
 
-WORKDIR /jetson-inference/cmake-3.19.1-build
-RUN ./configure --no-qt-gui
-RUN cmake -DBUILD_QtDialog=ON -DQT_QMAKE_EXECUTABLE=/usr/lib/qt5/bin/qmake ../cmake-3.19.1 -DCMAKE_USE_OPENSSL=OFF
-
-RUN make -j $(nproc)
-#make test
-RUN make install
-RUN cmake --version
-
-WORKDIR /jetson-inference/TensorRT/
-RUN export TRT_LIBPATH=`pwd`/TensorRT-8.0.3.4
-WORKDIR /jetson-inference/TensorRT/build 
-
-RUN cmake .. -DTRT_LIB_DIR=$TRT_LIBPATH -DTRT_OUT_DIR=`pwd`/out -DTRT_PLATFORM_ID=aarch64 -DCUDA_VERSION=10.2
-RUN CC=/usr/bin/gcc make -j$(nproc)
 
